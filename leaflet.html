@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>dempng-worker</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-hash@0.2.1/leaflet-hash.js"></script>
+  </head>
+
+  <body>
+    <div id="map" style="position: absolute; top: 0; left: 0; bottom: 0; right: 0"></div>
+    <script>
+      const map = L.map("map", { center: [42.4934, 141.18721], zoom: 12 });
+
+      L.control
+        .layers(
+          {
+            淡色地図: L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
+              attribution:
+                "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
+            }).addTo(map),
+            標準地図: L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
+              attribution:
+                "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
+            }),
+            色別標高図: L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/relief/{z}/{x}/{y}.png", {
+              attribution:
+                "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
+            }),
+            写真: L.tileLayer(
+              "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg",
+              {
+                attribution:
+                  "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
+              }
+            ),
+            OpenStreetMap: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+              attribution:
+                "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+            }),
+          },
+          {
+            傾斜: L.tileLayer(
+              "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=slope&gain=1&max=60&colors=00000000-000000ff&&fallback=00000000",
+              {
+                attribution:
+                  "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>",
+                maxNativeZoom: 14,
+              }
+            ).addTo(map),
+            凸: L.tileLayer(
+              "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=curvature&gain=1&min=0&max=5&colors=ff000000-ff0000ff&fallback=00000000",
+              {
+                attribution:
+                  "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>",
+                maxNativeZoom: 14,
+              }
+            ).addTo(map),
+            凹: L.tileLayer(
+              "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=curvature&gain=20&min=-90&max=0&colors=0000ffff-0000ff00&fallback=00000000",
+              {
+                attribution:
+                  "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>",
+                maxNativeZoom: 14,
+              }
+            ).addTo(map),
+          },
+          {
+            collapsed: false,
+          }
+        )
+        .addTo(map);
+
+      L.hash(map);
+    </script>
+  </body>
+</html>

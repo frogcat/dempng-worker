@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>dempng-worker</title>
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
+    <link href="https://unpkg.com/maplibre-gl@5.11.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@5.11.0/dist/maplibre-gl.js"></script>
+  </head>
+  <body>
+    <div id="map" style="position: absolute; top: 0; left: 0; bottom: 0; right: 0"></div>
+    <script type="module">
+      (async (a) => {
+        await a.register("./dempng-worker.js", { type: "module" });
+        if (a.controller) startApp();
+        else a.addEventListener("controllerchange", startApp, { once: true });
+      })(navigator.serviceWorker);
+
+      function startApp() {
+        const params = new URLSearchParams(location.search);
+        const style = params.get("style") || "style/default.json";
+        const map = new maplibregl.Map({
+          container: "map",
+          hash: true,
+          style: style,
+        });
+      }
+    </script>
+  </body>
+</html>

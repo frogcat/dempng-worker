@@ -1,0 +1,102 @@
+{
+  "version": 8,
+  "glyphs": "https://maps.gsi.go.jp/xyz/noto-jp/{fontstack}/{range}.pbf",
+  "sources": {
+    "pale": {
+      "type": "raster",
+      "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"],
+      "minzoom": 2,
+      "maxzoom": 17,
+      "tileSize": 256,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>"
+    },
+    "dem": {
+      "type": "raster-dem",
+      "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=mapbox"],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 17,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    },
+    "slope": {
+      "type": "raster",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=slope&gain=1&max=60&colors=00000000-000000ff&&fallback=00000000"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 17,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    },
+    "convex": {
+      "type": "raster",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=curvature&gain=1&min=0&max=5&colors=ff000000-ff0000ff&fallback=00000000"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 15,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    },
+    "concave": {
+      "type": "raster",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=curvature&gain=20&min=-90&max=0&colors=0000ffff-0000ff00&fallback=00000000"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 15,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    }
+  },
+  "layers": [
+    {
+      "id": "pale",
+      "type": "raster",
+      "source": "pale",
+      "minzoom": 2,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 1
+      }
+    },
+    {
+      "id": "convex",
+      "type": "raster",
+      "source": "convex",
+      "minzoom": 1,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 0.8
+      }
+    },
+    {
+      "id": "concave",
+      "type": "raster",
+      "source": "concave",
+      "minzoom": 1,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 0.8
+      }
+    },
+    {
+      "id": "slope",
+      "type": "raster",
+      "source": "slope",
+      "minzoom": 1,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 0.8
+      }
+    }
+  ],
+  "terrain": {
+    "source": "dem",
+    "exaggeration": 1
+  },
+  "center": [141.77062, 40.19404],
+  "zoom": 15,
+  "pitch": 60,
+  "bearing": 30
+}
