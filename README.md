@@ -2,16 +2,16 @@
 
 国土地理院標高タイルのための ServiceWorker
 
-# demo
+## Demo
 
-## leaflet
+### leaflet
 
 <https://frogcat.github.io/dempng-worker/leaflet.html>
 
-## maplibre-gl-js
+### maplibre-gl-js
 
 <https://frogcat.github.io/dempng-worker/maplibre.html>
 
-# Usage
+## Usage
 
 **ToDo**
