@@ -12,30 +12,40 @@
     },
     "dem": {
       "type": "raster-dem",
-      "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=mapbox"],
+      "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=mapbox"],
       "tileSize": 256,
       "minzoom": 1,
-      "maxzoom": 17,
+      "maxzoom": 14,
       "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
     },
-    "slope": {
+    "elevation": {
       "type": "raster",
       "tiles": [
-        "https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=slope&gain=1&high=60&colors=00000000-000000ff&&fallback=00000000"
+        "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=elevation&colors=0000ff-00ffff-00ff00-ffff00-ff0000"
       ],
       "tileSize": 256,
       "minzoom": 1,
-      "maxzoom": 17,
+      "maxzoom": 14,
       "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
     },
-    "curvature": {
+    "hillshade": {
       "type": "raster",
       "tiles": [
-        "https://cyberjapandata.gsi.go.jp/xyz/dem1a_png/{z}/{x}/{y}.png?type=curvature&gain=40&colors=0000ffff-ffffff00-ff0000ff"
+        "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=hillshade&dir=135"
       ],
       "tileSize": 256,
       "minzoom": 1,
-      "maxzoom": 15,
+      "maxzoom": 14,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    },
+    "contour": {
+      "type": "raster",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=contour&color=ffffff"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 14,
       "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
     }
   },
@@ -51,32 +61,42 @@
       }
     },
     {
-      "id": "curvature",
+      "id": "elevation",
       "type": "raster",
-      "source": "curvature",
+      "source": "elevation",
       "minzoom": 1,
       "maxzoom": 20,
       "paint": {
-        "raster-opacity": 0.8
+        "raster-opacity": 1
       }
     },
     {
-      "id": "slope",
+      "id": "hillshade",
       "type": "raster",
-      "source": "slope",
+      "source": "hillshade",
       "minzoom": 1,
       "maxzoom": 20,
       "paint": {
-        "raster-opacity": 0.8
+        "raster-opacity": 0.5
+      }
+    },
+    {
+      "id": "contour",
+      "type": "raster",
+      "source": "contour",
+      "minzoom": 1,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 1.0
       }
     }
   ],
   "terrain": {
     "source": "dem",
-    "exaggeration": 1
+    "exaggeration": 2
   },
-  "center": [141.77062, 40.19404],
-  "zoom": 15,
+  "center": [139.177, 35.437],
+  "zoom": 8,
   "pitch": 60,
-  "bearing": 30
+  "bearing": 0
 }

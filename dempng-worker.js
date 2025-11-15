@@ -1,4 +1,4 @@
-import { mapbox, slope, curvature } from "./lib/main.js";
+import { mapbox, slope, curvature, elevation, contour, hillshade } from "./lib/main.js";
 
 self.addEventListener("install", () => {
   console.info("installing dempng-worker.js");
@@ -33,6 +33,18 @@ self.addEventListener("fetch", (event) => {
   }
   if (url.searchParams.has("type", "curvature")) {
     event.respondWith(curvature(url));
+    return;
+  }
+  if (url.searchParams.has("type", "elevation")) {
+    event.respondWith(elevation(url));
+    return;
+  }
+  if (url.searchParams.has("type", "contour")) {
+    event.respondWith(contour(url));
+    return;
+  }
+  if (url.searchParams.has("type", "hillshade")) {
+    event.respondWith(hillshade(url));
     return;
   }
 
