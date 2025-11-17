@@ -1,4 +1,4 @@
-import { mapbox, slope, curvature, elevation, contour, hillshade } from "./lib/main.js";
+import * as main from "./lib/main.js";
 
 self.addEventListener("install", () => {
   console.info("installing dempng-worker.js");
@@ -21,32 +21,10 @@ const allow = [
 
 self.addEventListener("fetch", (event) => {
   if (!allow.find((x) => event.request.url.startsWith(x))) return;
-
-  const url = new URL(event.request.url);
-  if (url.searchParams.has("type", "mapbox")) {
-    event.respondWith(mapbox(url));
-    return;
+  const url1 = new URL(event.request.url);
+  const key = Object.keys(main).find((x) => url1.searchParams.has("type", x));
+  if (key) {
+    const url2 = new URL(event.request.url.replace(/[?#].*$/, ""));
+    event.respondWith(main[key](url2, url1.searchParams));
   }
-  if (url.searchParams.has("type", "slope")) {
-    event.respondWith(slope(url));
-    return;
-  }
-  if (url.searchParams.has("type", "curvature")) {
-    event.respondWith(curvature(url));
-    return;
-  }
-  if (url.searchParams.has("type", "elevation")) {
-    event.respondWith(elevation(url));
-    return;
-  }
-  if (url.searchParams.has("type", "contour")) {
-    event.respondWith(contour(url));
-    return;
-  }
-  if (url.searchParams.has("type", "hillshade")) {
-    event.respondWith(hillshade(url));
-    return;
-  }
-
-  return;
 });
