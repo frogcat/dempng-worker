@@ -7,10 +7,41 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-hash@0.2.1/leaflet-hash.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+    <style>
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+      #tl {
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        width: auto;
+        height: auto;
+        z-index: 2000;
+      }
+    </style>
   </head>
 
   <body>
-    <div id="map" style="position: absolute; top: 0; left: 0; bottom: 0; right: 0"></div>
+    <div id="map"></div>
+    <nav id="tl">
+      <select id="style">
+        <option value="hillshade">陰影図 (hillshade)</option>
+        <option value="contour">等高線図 (contour)</option>
+        <option value="slope">傾斜量図 (slope)</option>
+        <option value="elevation">段彩図 (elevation)</option>
+        <option value="curvature">曲率図 (curvature)</option>
+        <option value="relief">陰影段彩等高線図 (relief)</option>
+        <option value="rrim">赤色立体地図風 (rrim)</option>
+        <option value="csmap">CS立体図風 (csmap)</option>
+      </select>
+    </nav>
+
     <script>
       (async (a) => {
         await a.register("./dempng-worker.js", { type: "module" });
@@ -18,72 +49,42 @@
         else a.addEventListener("controllerchange", startApp, { once: true });
       })(navigator.serviceWorker);
 
-      function startApp() {
-        const map = L.map("map", { center: [42.4934, 141.18721], zoom: 12 });
+      async function startApp() {
+        const params = new URLSearchParams(location.search);
+        $(`#style option[value="${params.get("style")}"]`).prop("selected", true);
+        $("#style").on("change", function () {
+          location.href = "?style=" + $(this).val();
+        });
 
-        L.control
-          .layers(
-            {
-              淡色地図: L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png", {
-                attribution:
-                  "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
-              }).addTo(map),
-              標準地図: L.tileLayer("https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png", {
-                attribution:
-                  "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
-              }),
-              色別標高図: L.tileLayer(
-                "https://cyberjapandata.gsi.go.jp/xyz/relief/{z}/{x}/{y}.png",
-                {
-                  attribution:
-                    "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
-                }
-              ),
-              写真: L.tileLayer(
-                "https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg",
-                {
-                  attribution:
-                    "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>",
-                }
-              ),
-              OpenStreetMap: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                attribution:
-                  "&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-              }),
-            },
-            {
-              傾斜: L.tileLayer(
-                "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=slope&gain=1&high=60&colors=00000000-000000ff&&fallback=00000000",
-                {
-                  attribution:
-                    "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>",
-                  maxNativeZoom: 14,
-                }
-              ).addTo(map),
-              凸: L.tileLayer(
-                "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=curvature&gain=1&low=0&high=5&colors=ff000000-ff0000ff&fallback=00000000",
-                {
-                  attribution:
-                    "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>",
-                  maxNativeZoom: 14,
-                }
-              ).addTo(map),
-              凹: L.tileLayer(
-                "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=curvature&gain=20&low=-90&high=0&colors=0000ffff-0000ff00&fallback=00000000",
-                {
-                  attribution:
-                    "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>",
-                  maxNativeZoom: 14,
-                }
-              ).addTo(map),
-            },
-            {
-              collapsed: false,
-            }
-          )
-          .addTo(map);
+        const res = await fetch(`style/${$("#style").val()}.json`);
+        if (!res.ok) {
+          alert(`Style ${$("#style").val()} not found`);
+          return;
+        }
+        const style = await res.json();
 
+        const map = L.map("map", { center: [style.center[1], style.center[0]], zoom: style.zoom });
+        map.zoomControl.setPosition("bottomright");
         L.hash(map);
+
+        const overlays = {};
+
+        for (const layer of style.layers) {
+          if (layer.paint === undefined) layer.paint = {};
+          const source = style.sources[layer.source];
+          overlays[layer.id] = L.tileLayer(source.tiles[0], {
+            attribution: source.attribution,
+            maxNativeZoom: source.maxzoom,
+            minZoom: source.minzoom,
+            maxZoom: layer.maxzoom,
+            opacity: layer.paint["raster-opacity"] || 1,
+          }).addTo(map);
+        }
+        L.control
+          .layers({}, overlays, {
+            collapsed: false,
+          })
+          .addTo(map);
       }
     </script>
   </body>

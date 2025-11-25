@@ -6,9 +6,49 @@
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
     <link href="https://unpkg.com/maplibre-gl@5.11.0/dist/maplibre-gl.css" rel="stylesheet" />
     <script src="https://unpkg.com/maplibre-gl@5.11.0/dist/maplibre-gl.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+    <style>
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+      }
+      #bl {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        width: auto;
+        height: auto;
+      }
+      #tr {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: auto;
+        height: auto;
+      }
+    </style>
   </head>
   <body>
-    <div id="map" style="position: absolute; top: 0; left: 0; bottom: 0; right: 0"></div>
+    <div id="map"></div>
+    <nav id="bl">
+      <label>地形強調<input type="range" min="0" max="20" value="1" step="any" id="ex" /></label>
+    </nav>
+    <nav id="tr">
+      <select id="style">
+        <option value="hillshade">陰影図 (hillshade)</option>
+        <option value="contour">等高線図 (contour)</option>
+        <option value="slope">傾斜量図 (slope)</option>
+        <option value="elevation">段彩図 (elevation)</option>
+        <option value="curvature">曲率図 (curvature)</option>
+        <option value="relief">陰影段彩等高線図 (relief)</option>
+        <option value="rrim">赤色立体地図風 (rrim)</option>
+        <option value="csmap">CS立体図風 (csmap)</option>
+      </select>
+    </nav>
+
     <script type="module">
       (async (a) => {
         await a.register("./dempng-worker.js", { type: "module" });
@@ -18,11 +58,19 @@
 
       function startApp() {
         const params = new URLSearchParams(location.search);
-        const style = params.get("style") || "style/default.json";
+        $(`#style option[value="${params.get("style")}"]`).prop("selected", true);
         const map = new maplibregl.Map({
           container: "map",
           hash: true,
-          style: style,
+          style: `style/${$("#style").val()}.json`,
+        });
+        $("#ex").on("input", function () {
+          map.setTerrain(
+            Object.assign(map.getTerrain(), { exaggeration: parseFloat($(this).val()) })
+          );
+        });
+        $("#style").on("change", function () {
+          location.href = "?style=" + $(this).val();
         });
       }
     </script>
