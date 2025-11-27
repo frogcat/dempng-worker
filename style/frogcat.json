@@ -1,0 +1,82 @@
+{
+  "version": 8,
+  "glyphs": "https://maps.gsi.go.jp/xyz/noto-jp/{fontstack}/{range}.pbf",
+  "sources": {
+    "pale": {
+      "type": "raster",
+      "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/pale/{z}/{x}/{y}.png"],
+      "minzoom": 2,
+      "maxzoom": 17,
+      "tileSize": 256,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a>"
+    },
+    "dem": {
+      "type": "raster-dem",
+      "tiles": ["https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=mapbox"],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 14,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    },
+    "slope": {
+      "type": "raster",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=slope&gain=1&high=60&colors=00000000-000000ff&&fallback=00000000"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 14,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    },
+    "curvature": {
+      "type": "raster",
+      "tiles": [
+        "https://cyberjapandata.gsi.go.jp/xyz/dem_png/{z}/{x}/{y}.png?type=curvature&gain=20&colors=000080ff-ffffff00-ff8000ff"
+      ],
+      "tileSize": 256,
+      "minzoom": 1,
+      "maxzoom": 12,
+      "attribution": "<a href='http://maps.gsi.go.jp/development/ichiran.html'>地理院タイル</a> & <a href='https://github.com/frogcat/dempng-worker'>dempng-worker</a>"
+    }
+  },
+  "layers": [
+    {
+      "id": "pale",
+      "type": "raster",
+      "source": "pale",
+      "minzoom": 2,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 1
+      }
+    },
+    {
+      "id": "curvature",
+      "type": "raster",
+      "source": "curvature",
+      "minzoom": 1,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 0.8
+      }
+    },
+    {
+      "id": "slope",
+      "type": "raster",
+      "source": "slope",
+      "minzoom": 1,
+      "maxzoom": 20,
+      "paint": {
+        "raster-opacity": 0.8
+      }
+    }
+  ],
+  "terrain": {
+    "source": "dem",
+    "exaggeration": 2.5
+  },
+  "center": [141.18875, 42.48412],
+  "zoom": 13,
+  "pitch": 60,
+  "bearing": 30
+}
